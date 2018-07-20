@@ -17,6 +17,7 @@ from __future__ import division
 from __future__ import print_function
 
 import json
+import itertools
 import os
 import random
 import sys
@@ -41,16 +42,16 @@ tf.app.flags.DEFINE_string(
 # Training parameters
 # task_family flag inherited from task_bank.py
 tf.app.flags.DEFINE_integer('num_steps', 100000, 'number of training steps')
-tf.app.flags.DEFINE_integer('display_step', 2000, 'display every # steps')
+tf.app.flags.DEFINE_integer('display_step', 10, 'display every # steps')
 tf.app.flags.DEFINE_integer('summary_step', 500, 'log summaries every # steps')
 tf.app.flags.DEFINE_integer('batch_size', 250, 'batch size for training')
 
 # Logistics
-tf.app.flags.DEFINE_string('data_dir', '/tmp/cog/tfrecord',
+tf.app.flags.DEFINE_string('data_dir', '/tmp/clevr/tfrecord',
                            'Directory of training and validation data.')
-tf.app.flags.DEFINE_string('train_dir', '/tmp/cog/train/clevr',
+tf.app.flags.DEFINE_string('train_dir', '/tmp/clevr/train',
                            'Directory to put the training logs.')
-tf.app.flags.DEFINE_boolean('report_param_stat', True,
+tf.app.flags.DEFINE_boolean('report_param_stat', False,
                             'If true, report parameter statistics')
 FLAGS = tf.app.flags.FLAGS
 
@@ -173,9 +174,9 @@ def run_test(train_dir, test_output_dir, hparams):
     global_step = sess.run(tf.train.get_global_step())
     print("Global step value loaded from checkpoint: " + str(global_step))
     ans = {}
-    for i in range(100000):  # larger than #batches in CLEVR test set
+    for i in itertools.count():
       if i % 100 == 0:
-        print(str(i))
+        print('Processing batch', i)
 
       try:
         m_ans, q_idx_ = sess.run([model_answers, q_idx])
@@ -316,7 +317,6 @@ def run_training(hparams, train_dir, tuner):
     while global_step <= FLAGS.num_steps:
       trial = global_step * FLAGS.batch_size
       try:
-
         # Evaluation
         if global_step > 0 and global_step % FLAGS.display_step == 0:
           acc_val_ = evaluate(sess, model_val, n_batches=300,
@@ -328,7 +328,6 @@ def run_training(hparams, train_dir, tuner):
           if acc_val_ > best_acc_val_:
             best_acc_val_ = acc_val_
             save_path = saver.save(sess, train_dir + '/checkpoints/model.ckpt')
-                                   #global_step=tf.train.get_global_step())
             print('Model saved in file {:s}'.format(save_path))
 
         if global_step > 0 and global_step % FLAGS.summary_step == 0:
@@ -339,7 +338,7 @@ def run_training(hparams, train_dir, tuner):
                model_train.acc])
           test_writer.add_summary(summary, trial)
         else:
-          # Train after evaluation for step 0
+          # Training
           global_step, _, acc_train_ = sess.run(
               [tf.train.get_global_step(),
                model_train.train_step,
@@ -370,12 +369,11 @@ def run_training(hparams, train_dir, tuner):
 
 def main(_):
   hparams_dict = get_default_hparams_dict()
-  hparams = tf.HParams(**hparams_dict)
+  hparams = tf.contrib.training.HParams(**hparams_dict)
   hparams = hparams.parse(FLAGS.hparams)  # Overwritten by FLAGS.hparams
 
   if FLAGS.clevr_test_output:
-    assert false, "Need to fix this code path"
-    run_test(hparams)
+    run_test(FLAGS.train_dir, FLAGS.clevr_test_output, hparams)
   else:
     run_training(hparams, FLAGS.train_dir, None)
 
