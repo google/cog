@@ -1,7 +1,6 @@
-# Studying human-level cognition with neural networks trained for many tasks
+# A dataset and architecture for visual reasoning with a working memory
+This is the code accompanying ECCV 2018 paper https://arxiv.org/abs/1803.06092 .
 
-This work studies how neural networks can perform a large range of cognitive
-tasks common in human cognitive neuroscience and psychology studies.
 
 # Getting started
 
@@ -11,12 +10,12 @@ You need to have the following libraries installed:
 - opencv 3. Tested with 3.4.1.15. Other 3.* version should work as well.
 - scipy
 ```
- pip install opencv-python tensorflow opencv-python
+ pip install opencv-python tensorflow opencv-python scipy
 ```
 
 Some visualizations require matplotlib.
 
-You can use your favorite python IDE to import the project. Alternatively, you can add the base directory to you PYTHONPATH.
+You can use your favorite python IDE to import the project. Alternatively, you can add the base directory to your PYTHONPATH.
 
 
 # Datasets
