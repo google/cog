@@ -82,10 +82,7 @@ INPUTVOCABULARY_DICT = dict([(k, i) for i, k in enumerate(INPUTVOCABULARY)])
 
 INPUTVOCABULARY_SIZE = len(INPUTVOCABULARY)
 
-# 'invalid' cannot be output by the network, but we use it for storing the
-# answers as first few answers can be 'invalid'.
-OUTPUTVOCABULARY = ['invalid', 'true', 'false'] + ALLCOLORS + ALLSHAPES
-OUTPUTVOCABULARY_SIZE = len(OUTPUTVOCABULARY)
+OUTPUTVOCABULARY = ['true', 'false'] + ALLCOLORS + ALLSHAPES
 
 # Maximum number of words in a sentence
 MAXSEQLENGTH = 25

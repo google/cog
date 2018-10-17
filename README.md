@@ -153,6 +153,23 @@ python clevr/train.py --data_dir=<directory containing converted tf records> \
      --clevr_test_output=<directory to output test results>
 ```
 
+# Testing
+
+## COG
+
+We have included a `cognitive/test.py` script to evaluate a model on the test dataset
+as well as a model checkpoint trained on canonical cog that reaches 94% accuracy.
+
+You can run this model on examples generated on the fly with:
+```
+python cognitive/test.py --model_dir=./trained/cog_canonical
+```
+
+To run on a saved dataset, e.g. a downloaded canonical dataset, use the `--data_dir` option:
+```
+python cognitive/test.py --model_dir=./trained/cog_canonical --data_dir=/tmp/data_4_3_1/
+```
+
 
 # Disclaimer
 
